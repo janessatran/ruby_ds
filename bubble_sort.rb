@@ -1,7 +1,5 @@
 def bubble_sort(arr)
-  if arr.length == 1
-    return arr
-  end
+  return if arr.length == 1
   swapped = true
   while swapped
     swapped = false
@@ -9,17 +7,15 @@ def bubble_sort(arr)
       if arr[idx] > arr[idx+1]
         arr[idx], arr[idx+1] = arr[idx+1], arr[idx]
         swapped = true
-      end 
-    end 
+      end
+    end
   end
   arr
-end 
+end
 
 
 def bubble_sort_by(arr)
-  if arr.length == 1
-    return arr
-  end
+  return if arr.length == 1
   swapped = true
   while swapped
     swapped = false
@@ -28,12 +24,9 @@ def bubble_sort_by(arr)
       if comparison > 0
         arr[idx], arr[idx+1] = arr[idx+1], arr[idx]
         swapped = true
-      end 
-    end 
+      end
+    end
   end
   arr
-end 
-
-bubble_sort_by(['hello', 'hi', 'hey']) do |left, right|
-  left.length - right.length
 end
+

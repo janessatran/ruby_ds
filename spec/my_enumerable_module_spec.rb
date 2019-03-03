@@ -1,8 +1,8 @@
 require ('./my_enumerable_module.rb')
 
-describe Enumerable do 
+describe Enumerable do
 
-  describe '#my_each' do 
+  describe '#my_each' do
 
     it 'iterates through each element of the object passed to it' do
       expect(['hi', 'hello', 1, 2].my_each {|idx| puts idx }).to eq(['hi', 'hello', 1, 2])
@@ -22,7 +22,7 @@ describe Enumerable do
 
   end 
 
-  describe '#my_select' do 
+  describe '#my_select' do
 
     it 'selects items out of the object that appear in the search regex' do
       expect(['a', 'b', 'c', 'd', 'e'].my_select {|i| i =~ /[aeiou]/}).to eq(['a', 'e'])

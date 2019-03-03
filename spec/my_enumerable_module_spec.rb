@@ -5,12 +5,23 @@ describe Enumerable do
   describe '#my_each' do
 
     it 'iterates through each element of the object passed to it' do
-      expect(['hi', 'hello', 1, 2].my_each {|idx| puts idx }).to eq(['hi', 'hello', 1, 2])
+      expect(['hi', 'hello', 1, 2].my_each {|i| puts i }).to eq(['hi', 'hello', 1, 2])
     end
 
-    it 'does nothing if not block is given' do
-      expect([].my_each).to eq([])
+    it 'returns an enumerator if no block is given' do
+      expect([].my_each).to be_a Enumerable
     end
+
+    it 'returns an enumerator if no block is given' do
+      hash = {"a"=>1, "b"=>2}
+      expect(hash.my_each).to be_a Enumerable
+    end
+
+    it 'iterates through each element in the collection' do
+      expect((1..3).my_each {|i| puts i}).to eq(1..3)
+    end
+
+
 
   end
 
@@ -99,10 +110,23 @@ describe Enumerable do
       expect([1,2,3,4].my_inject {|product, item| product * item}).to eq(24)
     end
 
+    it 'combines all elements in a function by applying operation specified in block' do
+      expect((1..4).my_inject {|product, item| product * item}).to eq(24)
+    end
+
     it 'returns nil if no block is passed to operate on' do
       expect(([0,1,2].my_inject {})).to eq(nil)
     end
-  
+
+    it 'returns the total price of the shopping cart' do 
+      shopping_cart = ['carrots', 'bananas', 'apples']
+      item_prices = {'carrots' => 3, 'bananas' => 2, 'apples' => 4}
+      expect(shopping_cart.my_inject(0) {|total, item| total + item_prices[item]}).to eq(9)
+    end
+
+    it 'combines all elements in a function by applying operation specified in block' do
+      expect([1,2,3,4].my_inject {|product, item| product * item}).to eq(24)
+    end
   end
 
 end

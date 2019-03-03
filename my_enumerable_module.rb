@@ -1,9 +1,10 @@
 module Enumerable
   def my_each
-    # your code here
+    return self.to_enum unless block_given? 
     for i in self
-      yield i if block_given? 
+      yield i 
     end
+    self
   end
 
   def my_each_with_index
@@ -81,16 +82,21 @@ module Enumerable
   end
 
   def my_inject(memo=nil)
+    if self.instance_of?(Range)
+      arg = self.to_a
+    else
+      arg = self
+    end
     if memo == nil
-      accum = self[0] # set accum to initial val
+      accum = arg[0] # set accum to initial val
       idx = 1
     else 
       accum = memo
       idx = 0
     end
-    while idx < self.length
+    while idx < arg.length
       if block_given?
-        accum = yield(accum,self[idx])
+        accum = yield(accum,arg[idx])
       else
         accum = nil
       end

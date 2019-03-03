@@ -25,7 +25,7 @@ module Enumerable
     found_items
   end
 
-  def my_all
+  def my_all?
     flag = true
     self.my_each do |item|
       if block_given?
@@ -37,6 +37,68 @@ module Enumerable
     end
     flag
   end
+
+  def my_any?
+    flag = false
+    self.my_each do |item|
+      if block_given?
+        if yield item
+          flag = true
+          break
+        end
+      end
+    end
+    flag
+  end
+
+  def my_none?
+    flag = true
+    self.my_each do |item|
+      if block_given?
+        if yield item
+          flag = false
+        end
+      end
+    end
+    flag
+  end
+
+  def my_count
+    self.length
+  end
+
+  def my_map(p=nil)
+    new_values = []
+    for item in self
+      if block_given?
+        new_val = yield item
+      else
+        new_val = p.call
+      end
+      new_values << new_val
+    end
+    new_values
+  end
+
+  def my_inject(memo=nil)
+    if memo == nil
+      accum = self[0] # set accum to initial val
+      idx = 1
+    else 
+      accum = memo
+      idx = 0
+    end
+    while idx < self.length
+      if block_given?
+        accum = yield(accum,self[idx])
+      else
+        accum = nil
+      end
+      idx += 1
+    end
+    accum
+  end 
+
 
   def bubble_sort(arr)
     return if arr.length == 1

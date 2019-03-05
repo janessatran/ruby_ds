@@ -21,6 +21,8 @@ module Enumerable
         if yield item
           found_items << item
         end
+      else
+        found_items = self.to_enum
       end
     end
     found_items
@@ -34,22 +36,30 @@ module Enumerable
           flag = false
           break
         end
+      else
+        if item.nil? || item == false
+          flag = false
+        end
       end
     end
     flag
   end
 
   def my_any?
-    flag = false
+    truths = []
     self.my_each do |item|
       if block_given?
         if yield item
-          flag = true
+          truths << item
+          break
+        end
+      else
+        if (item.nil? || item == false)
           break
         end
       end
     end
-    flag
+    truths.length > 0 ? true : false
   end
 
   def my_none?
@@ -64,45 +74,73 @@ module Enumerable
     flag
   end
 
-  def my_count
-    self.length
+  def my_count(args=nil)
+    count = 0
+    if args.nil? == false
+      self.my_each do |item|
+        if item == args
+          count += 1
+        end
+      end
+    elsif block_given? 
+      self.my_each do |item|
+        if yield item
+          count += 1
+        end
+      end
+    else
+      count = self.length
+    end
+    return count
   end
 
   def my_map(p=nil)
     new_values = []
     for item in self
-      if block_given?
+      if p.nil? == false
+        new_val = p.call(item)
+      elsif block_given? 
         new_val = yield item
-      else
-        new_val = p.call
       end
       new_values << new_val
     end
     new_values
   end
 
-  def my_inject(memo=nil)
-    if self.instance_of?(Range)
-      arg = self.to_a
-    else
-      arg = self
-    end
-    if memo == nil
-      accum = arg[0] # set accum to initial val
-      idx = 1
-    else 
-      accum = memo
+  def my_inject(*args)
+    if (args[1].is_a?(Symbol) && args[0].is_a?(Integer))
+      memo = args[0]
+      self.my_each { |item| memo = memo.method(args[1]).call(item) }
+    elsif (block_given? && args[0].is_a?(Integer))
+        memo = args[0] # set accum to initial val
+        self.my_each {|item| memo = yield(memo, item)}
+    elsif (block_given? && args[0].nil?)
       idx = 0
-    end
-    while idx < arg.length
-      if block_given?
-        accum = yield(accum,arg[idx])
-      else
-        accum = nil
+      self.my_each do |item|
+        idx == 0 ? memo = item : memo = yield(memo, item)
+        idx += 1
       end
-      idx += 1
+    elsif (args.length == 1 && block_given? == false)
+      if args[0].is_a?(Symbol)
+        idx = 0
+        self.my_each do |item|
+          idx == 0 ? memo = item : memo =  memo.method(args[0]).call(item)
+          idx += 1
+        end
+      elsif args[0].is_a?(String)
+        math_ops = [:+, :-, :*, :/, :==, :=~]
+        if math_ops.my_any? {|o| o == args[0].to_sym}
+          idx = 0
+          self.my_each do |item|
+            idx == 0 ? memo = item : memo = memo.method(args[0].to_sym).call(item)
+            idx += 1
+          end
+        else
+          raise 'Invalid operator'
+        end
+      end
     end
-    accum
+  memo
   end
 
 end

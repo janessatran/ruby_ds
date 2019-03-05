@@ -21,8 +21,6 @@ describe Enumerable do
       expect((1..3).my_each {|i| puts i}).to eq(1..3)
     end
 
-
-
   end
 
   describe '#my_each_with_index' do
@@ -39,6 +37,16 @@ describe Enumerable do
       expect(['a', 'b', 'c', 'd', 'e'].my_select {|i| i =~ /[aeiou]/}).to eq(['a', 'e'])
     end
 
+    it 'returns an enumerator if no block is passed' do
+      hash = {"a"=>1, "b"=>2}
+      expect(hash.select).to be_a Enumerable
+    end
+
+    it 'returns items that meet the condition' do
+      shopping_cart = {"apples"=>3, "bananas"=>9}
+      expect(shopping_cart.select {|k,v| v > 3}).to eq({"bananas"=>9})
+    end
+
   end
 
   describe '#my_all?' do
@@ -50,6 +58,15 @@ describe Enumerable do
     it 'returns false if all values do not meet the condition passed in the block' do
       expect(['cat', 'hat', 'banana'].my_all? {|i| i.length == 3}).to eq(false)
     end
+
+    it 'passes an implicit block if no block is passed and returns true if none of the values are nil or false' do
+      expect((1..3).my_all?).to eq(true)
+    end
+
+    it 'passes an implicit block if no block is passed and returns true if none of the values are nil or false' do
+      expect([nil, 0, 1].my_all?).to eq(false)
+    end
+
   end
 
   describe '#my_any?' do
@@ -60,6 +77,15 @@ describe Enumerable do
 
     it 'returns false if none of the values meet the condition' do
       expect([1,2,3].my_any? {|i| i.is_a? String}).to eq(false)
+    end
+
+    it 'passes an implicit block if no block is passed and returns true if none of the values are nil or false' do
+      expect([nil, 0, 1].my_any?).to eq(false)
+    end
+
+    it ' returns true if any value meets the condition' do
+      math_ops = [:+, :-, :*, :/, :==, :=~]
+      expect(math_ops.my_any?{|i| i == '+'.to_sym}).to eq(true)
     end
 
   end
@@ -86,6 +112,13 @@ describe Enumerable do
       expect([].my_count).to eq(0)
     end
 
+    it 'counts the number of items in enum that equals the item if an argument is passed' do
+      expect([1,2,24,2,5,8].my_count(2)).to eq(2)
+    end
+
+    it 'counts the number of elements yielding a true value if a block is given' do
+      expect([1,2,3,4].my_count{|i| i % 2 == 0}).to eq(2)
+    end
   end
 
   describe '#my_map' do
@@ -94,10 +127,20 @@ describe Enumerable do
       expect([1,2,3].my_map {|i| i*2}).to eq([2, 4, 6])
     end
 
-    it 'returns the nil array if no block is given' do
-      expect([1,2,3].my_map {}).to eq([nil, nil, nil])
+    it 'if no block is given, an enumerator is returned instead' do
+      expect([1,2,3].my_map).to be_a Enumerable
     end
-  
+
+    it 'if a proc is given, run the proc' do
+      squareIt = Proc.new {|x| x*x}
+      expect([1,2,3].my_map(squareIt)).to eq([1,4,9])
+    end
+
+    it 'if a proc is given and a block is given, run the proc' do
+      squareIt = Proc.new {|x| x*x}
+      expect([1,2,3].my_map(squareIt) {|x| puts x}).to eq([1,4,9])
+    end
+
   end
 
   describe '#my_inject' do
@@ -127,6 +170,19 @@ describe Enumerable do
     it 'combines all elements in a function by applying operation specified in block' do
       expect([1,2,3,4].my_inject {|product, item| product * item}).to eq(24)
     end
+
+    it 'combines all elements in a function by applying operation specified by symbol passed as param' do
+      expect([1,2,3,4].my_inject(:*)).to eq(24)
+    end
+
+    it 'combines all elements in a function by applying operation specified by symbol passed as string' do
+      expect([1,2,3,4].my_inject('+')).to eq(10)
+    end
+
+    it 'takes an integer parameter as the initial memo value if passed with a symbol' do
+      expect([1,2,3,4].my_inject(3, :+)).to eq(13)
+    end
+    
   end
 
 end

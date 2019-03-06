@@ -1,2 +1,2 @@
 # ruby_ds
-implementing data structures in ruby for practice
+implementing sorting algorithms and custom Enumerable methods in ruby for practice

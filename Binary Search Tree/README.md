@@ -3,6 +3,8 @@ A **Binary Search Tree** is a node-based binary tree data structure which has th
 - The left subtree of a node contains only nodes with keys lesser than the node's key
 - The right subtree of a node contains only nodes with keys greater than the node's key
 - The left and right subtree's are also binary search trees
+- There are no duplicate keys
+
 
 A binary search tree's operations has the following complexities:
 - **searching**: In general O(h) where h is the height of the BST; worst case O(n).

@@ -43,14 +43,10 @@ class Game
 
     until @search_queue.empty?
       curr_node = @search_queue.shift
-      puts "LOOP"
-      # puts @search_queue.inspect
-      # puts @game_board.inspect
       if curr_node.value == target
         path = []
         node = curr_node
         until node == nil
-          puts node.inspect
           path << node.value
           node = node.parent
         end
@@ -60,12 +56,8 @@ class Game
           position = [curr_node.value[0] + move[0], curr_node.value[1] + move[1]]
           if valid_position?(position) and @game_board.include?(position) == false
             @new_node = Node.new(position, curr_node)
-            # curr_node.add_child(@new_node)
             @game_board.add(position)
             @search_queue << @new_node
-            # puts @search_queue.inspect
-            # puts @game_board.inspect
-
           end
         end
       end
